@@ -72,10 +72,10 @@ function checkName() {
     let control = input.toLocaleLowerCase("tr-TR");
 
     const allowedNames = [
-        "Ali kaan","Ares","Çınar","Ege","Arya","Alya","Emir","Delal",
-        "Pargalı Sarp","Sarp","Emre","Sertan","Meriç","Ela","Elif","Egesu",
-        "Demir","Arda","Hafsa","Işıl","Elizya","Şakir","Ezgi",
-        "Toprak","Defne","Ulya","Ceyla teacher"
+        "ali kaan","ares","çınar","ege","arya","alya","emir","delal",
+        "pargalı sarp","sarp","emre","sertan","meriç","ela","elif","egesu",
+        "demir","arda","hafsa","ışıl","elizya","şakir","ezgi",
+        "toprak","defne","ulya","ceyla teacher"
     ];
 
     if (allowedNames.includes(control)) {
@@ -88,7 +88,7 @@ function checkName() {
         if (control === "sarp") {
             finalName = "Pargalı Sarp";
         } else {
-            finalName = input; // sen nasıl yazdıysan öyle gösterir
+            finalName = input; // Sen nasıl yazdıysan öyle gösterir
         }
 
         document.getElementById("mainBox").innerHTML =
@@ -101,6 +101,3 @@ function checkName() {
 }
 
 </script>
-
-</body>
-</html>
