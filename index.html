@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Take Your Gift!!!!</title>
+<title>Special Gift</title>
 
 <style>
 body {
@@ -48,27 +48,24 @@ button {
 <body>
 
 <div class="box" id="mainBox">
-    <h1>Enter Your Name 👇And Take Your Gift</h1>
+    <h1>Enter Your Name 👇</h1>
     <input type="text" id="nameInput" placeholder="Type your name">
     <button onclick="checkName()">Check</button>
     <p id="result"></p>
 </div>
 
-<audio id="boomSound" src="boom.mp3"></audio>
-<audio id="winSound" src="win.mp3"></audio>
-
 <script>
-
-// Boom sadece 1 kez
-window.addEventListener("load", function () {
-    document.getElementById("boomSound").play().catch(()=>{});
-});
 
 function checkName() {
 
     let input = document.getElementById("nameInput").value.trim();
 
-    // Kontrol için küçük harfe çeviriyoruz (ama ekrana dokunmuyoruz)
+    if (input === "") {
+        document.getElementById("result").innerText = "Please enter your name!";
+        return;
+    }
+
+    // Küçük harfe çevirerek kontrol
     let control = input.toLocaleLowerCase("tr-TR");
 
     const allowedNames = [
@@ -80,15 +77,12 @@ function checkName() {
 
     if (allowedNames.includes(control)) {
 
-        document.getElementById("winSound").currentTime = 0;
-        document.getElementById("winSound").play();
-
         let finalName;
 
         if (control === "sarp") {
             finalName = "Pargalı Sarp";
         } else {
-            finalName = input; // Sen nasıl yazdıysan öyle gösterir
+            finalName = input;
         }
 
         document.getElementById("mainBox").innerHTML =
@@ -101,3 +95,6 @@ function checkName() {
 }
 
 </script>
+
+</body>
+</html>
