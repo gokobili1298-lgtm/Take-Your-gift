@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,16 +24,9 @@ body {
   border-radius: 20px;
   width: 320px;
   text-align: center;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
-.hidden {
-  display: none;
-}
-
-h1 {
-  margin-bottom: 20px;
-}
+.hidden { display: none; }
 
 input {
   width: 90%;
@@ -52,19 +45,13 @@ button {
   background: gold;
   font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
 }
 
-button:hover {
-  background: orange;
-  transform: scale(1.05);
-}
+button:hover { background: orange; }
 
 .error {
   color: #ff6b6b;
   margin-top: 10px;
-  font-size: 14px;
 }
 
 .bigText {
@@ -89,21 +76,20 @@ button:hover {
 }
 </style>
 </head>
-
 <body>
 
 <div class="container" id="loginScreen">
-  <h1>🎁 Enter Your Name</h1>
+  <h1>🎁 Enter Your Name And Take Your Gift</h1>
   <input type="text" id="nameInput" placeholder="Type your name">
   <br>
-  <button onclick="checkName()">Check</button>
+  <button id="checkBtn">Check</button>
   <div class="error" id="errorMessage"></div>
 </div>
 
 <div class="container hidden" id="winScreen">
   <h1>🎉 CONGRATULATIONS 🎉</h1>
   <div class="bigText" id="winnerName"></div>
-  <p>You unlocked your gift!</p>
+  <p>You unlocked your gift!What do you want?=?_?</p>
 </div>
 
 <audio id="boomSound" src="boom.mp3" preload="auto"></audio>
@@ -111,71 +97,72 @@ button:hover {
 
 <script>
 
-const validNames = [
-  "Ali Kaan","Ares","Çınar","Ege","Arya","Alya","Emir","Delal",
-  "Pargalı Sarp","Emre","Sertan","Meriç","Ela","Elif","Egesu",
-  "Demir","Arda","Hafsa","Işıl","Elizya","Şakir","Ezgi",
-  "Toprak","Defne","Ulya","Ceyla teacher"
-];
+document.addEventListener("DOMContentLoaded", function() {
 
-const boomSound = document.getElementById("boomSound");
-const winSound = document.getElementById("winSound");
-const errorMessage = document.getElementById("errorMessage");
+  const validNames = [
+    "Ali Kaan","Ares","Çınar","Ege","Arya","Alya","Emir","Delal",
+    "Pargalı Sarp","Emre","Sertan","Meriç","Ela","Elif","Egesu",
+    "Demir","Arda","Hafsa","Işıl","Elizya","Şakir","Ezgi",
+    "Toprak","Defne","Ulya","Ceyla teacher"
+  ];
 
-let alreadyWon = false;
-let boomPlayed = false;
+  const boomSound = document.getElementById("boomSound");
+  const winSound = document.getElementById("winSound");
+  const errorMessage = document.getElementById("errorMessage");
+  const checkBtn = document.getElementById("checkBtn");
 
+  let alreadyWon = false;
+  let boomPlayed = false;
 
-// 🔥 SAYFA AÇILDIĞINDA BOOM (1 KERE)
-window.addEventListener("click", function firstClick() {
+  // ✅ BOOM SADECE 1 KERE (sayfa açılınca)
   if (!boomPlayed) {
     boomSound.currentTime = 0;
     boomSound.play().catch(()=>{});
     boomPlayed = true;
   }
-  window.removeEventListener("click", firstClick);
+
+  checkBtn.addEventListener("click", function() {
+
+    if (alreadyWon) return;
+
+    let input = document.getElementById("nameInput").value.trim().toLowerCase();
+
+    // ✅ Sarp yazınca da kabul et
+    if (input === "Sarp") {
+      input = "Pargalı Sarp";
+    }
+
+    if (validNames.includes(input)) {
+
+      alreadyWon = true;
+      errorMessage.textContent = "";
+
+      // Patlama animasyonu
+      const boomEffect = document.createElement("div");
+      boomEffect.classList.add("explode");
+      document.body.appendChild(boomEffect);
+
+      setTimeout(() => {
+        boomEffect.remove();
+      }, 800);
+
+      // 🎉 SADECE WIN SESİ
+      winSound.currentTime = 0;
+      winSound.play().catch(()=>{});
+
+      setTimeout(() => {
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("winnerName").innerText = input.toUpperCase();
+        document.getElementById("winScreen").classList.remove("hidden");
+      }, 600);
+
+    } else {
+      errorMessage.textContent = "❌ Name not found";
+    }
+
+  });
+
 });
-
-
-function checkName() {
-
-  if (alreadyWon) return;
-
-  let input = document.getElementById("nameInput").value.trim().toLowerCase();
-
-  if (input === "sarp") {
-    input = "pargalı sarp";
-  }
-
-  if (validNames.includes(input)) {
-
-    alreadyWon = true;
-    errorMessage.textContent = "";
-
-    // 💥 Patlama animasyonu
-    const boomEffect = document.createElement("div");
-    boomEffect.classList.add("explode");
-    document.body.appendChild(boomEffect);
-
-    setTimeout(() => {
-      boomEffect.remove();
-    }, 800);
-
-    // 🎉 Win sesi
-    winSound.currentTime = 0;
-    winSound.play().catch(()=>{});
-
-    setTimeout(() => {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("winnerName").innerText = input.toUpperCase();
-      document.getElementById("winScreen").classList.remove("hidden");
-    }, 600);
-
-  } else {
-    errorMessage.textContent = "❌ Name not found";
-  }
-}
-
 </script>
 
 </body>
