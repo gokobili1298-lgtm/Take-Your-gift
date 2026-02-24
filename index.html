@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Find Your Gift</title>
 
@@ -14,36 +15,24 @@ body {
   background: linear-gradient(135deg, #141e30, #243b55);
   font-family: Arial, sans-serif;
   color: white;
-  text-align: center;
   overflow: hidden;
 }
 
 .container {
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.5);
   padding: 40px;
   border-radius: 20px;
   width: 320px;
-  transition: 0.5s;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
 .hidden {
   display: none;
 }
 
-.winScreen {
-  animation: fadeIn 0.8s forwards;
-}
-
-@keyframes fadeIn {
-  from {opacity:0; transform:scale(0.8);}
-  to {opacity:1; transform:scale(1);}
-}
-
-.bigText {
-  font-size: 28px;
-  font-weight: bold;
-  color: gold;
-  margin-top: 20px;
+h1 {
+  margin-bottom: 20px;
 }
 
 input {
@@ -64,10 +53,25 @@ button {
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
+  transition: 0.3s;
 }
 
 button:hover {
   background: orange;
+  transform: scale(1.05);
+}
+
+.error {
+  color: #ff6b6b;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.bigText {
+  font-size: 26px;
+  font-weight: bold;
+  color: gold;
+  margin-top: 20px;
 }
 
 .explode {
@@ -88,22 +92,20 @@ button:hover {
 
 <body>
 
-<!-- GİRİŞ EKRANI -->
 <div class="container" id="loginScreen">
-  <h1>Enter Your Name and take your gift 🎁</h1>
+  <h1>🎁 Enter Your Name</h1>
   <input type="text" id="nameInput" placeholder="Type your name">
   <br>
   <button onclick="checkName()">Check</button>
+  <div class="error" id="errorMessage"></div>
 </div>
 
-<!-- KAZANMA EKRANI -->
-<div class="container hidden winScreen" id="winScreen">
+<div class="container hidden" id="winScreen">
   <h1>🎉 CONGRATULATIONS 🎉</h1>
   <div class="bigText" id="winnerName"></div>
-  <p>You unlocked your gift!What do you want?_?=?</p>
+  <p>You unlocked your gift!</p>
 </div>
 
-<!-- SESLER -->
 <audio id="boomSound" src="boom.mp3" preload="auto"></audio>
 <audio id="winSound" src="win.mp3" preload="auto"></audio>
 
@@ -113,21 +115,44 @@ const validNames = [
   "Ali Kaan","Ares","Çınar","Ege","Arya","Alya","Emir","Delal",
   "Pargalı Sarp","Emre","Sertan","Meriç","Ela","Elif","Egesu",
   "Demir","Arda","Hafsa","Işıl","Elizya","Şakir","Ezgi",
-  "Toprak","Defne","Ulya","Ceyla Teacher"
+  "Toprak","Defne","Ulya","Ceyla teacher"
 ];
 
-function checkName() {
-  let input = document.getElementById("nameInput").value.trim();
-  const boomSound = document.getElementById("boomSound");
-  const winSound = document.getElementById("winSound");
+const boomSound = document.getElementById("boomSound");
+const winSound = document.getElementById("winSound");
+const errorMessage = document.getElementById("errorMessage");
 
-  if (input.toLowerCase() === "sarp") {
-    input = "Pargalı Sarp";
+let alreadyWon = false;
+let boomPlayed = false;
+
+
+// 🔥 SAYFA AÇILDIĞINDA BOOM (1 KERE)
+window.addEventListener("click", function firstClick() {
+  if (!boomPlayed) {
+    boomSound.currentTime = 0;
+    boomSound.play().catch(()=>{});
+    boomPlayed = true;
+  }
+  window.removeEventListener("click", firstClick);
+});
+
+
+function checkName() {
+
+  if (alreadyWon) return;
+
+  let input = document.getElementById("nameInput").value.trim().toLowerCase();
+
+  if (input === "sarp") {
+    input = "pargalı sarp";
   }
 
   if (validNames.includes(input)) {
 
-    // BOOM EFEKTİ
+    alreadyWon = true;
+    errorMessage.textContent = "";
+
+    // 💥 Patlama animasyonu
     const boomEffect = document.createElement("div");
     boomEffect.classList.add("explode");
     document.body.appendChild(boomEffect);
@@ -136,22 +161,18 @@ function checkName() {
       boomEffect.remove();
     }, 800);
 
-    // SESLERİ ÇAL
-    boomSound.currentTime = 0;
-    boomSound.play().catch(()=>{});
-
+    // 🎉 Win sesi
     winSound.currentTime = 0;
     winSound.play().catch(()=>{});
 
-    // EKRAN GEÇİŞİ
     setTimeout(() => {
       document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("winnerName").innerText = input;
+      document.getElementById("winnerName").innerText = input.toUpperCase();
       document.getElementById("winScreen").classList.remove("hidden");
-    }, 500);
+    }, 600);
 
   } else {
-    alert("❌ Name not found");
+    errorMessage.textContent = "❌ Name not found";
   }
 }
 
