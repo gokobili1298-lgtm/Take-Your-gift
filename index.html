@@ -1,88 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Find Your Gift</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Gift</title>
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #141e30, #243b55);
-      font-family: Arial, sans-serif;
-      color: white;
-      text-align: center;
-      overflow: hidden;
-    }
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
 
-    .container {
-      background: rgba(0,0,0,0.4);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(255,255,255,0.2);
-      width: 320px;
-    }
+.container {
+  background: rgba(0,0,0,0.4);
+  padding: 40px;
+  border-radius: 20px;
+  width: 320px;
+  transition: 0.5s;
+}
 
-    input {
-      width: 90%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      text-align: center;
-      font-size: 16px;
-    }
+.hidden {
+  display: none;
+}
 
-    button {
-      margin-top: 15px;
-      padding: 12px 20px;
-      border-radius: 10px;
-      border: none;
-      background: gold;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 16px;
-    }
+.winScreen {
+  animation: fadeIn 0.8s forwards;
+}
 
-    button:hover {
-      background: orange;
-    }
+@keyframes fadeIn {
+  from {opacity:0; transform:scale(0.8);}
+  to {opacity:1; transform:scale(1);}
+}
 
-    .message {
-      margin-top: 20px;
-      font-size: 20px;
-      min-height: 50px;
-    }
+.bigText {
+  font-size: 28px;
+  font-weight: bold;
+  color: gold;
+  margin-top: 20px;
+}
 
-    .explode {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, yellow, red, transparent);
-      animation: boom 1s forwards;
-      z-index: 999;
-    }
+input {
+  width: 90%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+}
 
-    @keyframes boom {
-      0% { opacity: 1; transform: scale(0); }
-      100% { opacity: 0; transform: scale(3); }
-    }
-  </style>
+button {
+  margin-top: 15px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: gold;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background: orange;
+}
+
+.explode {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, yellow, red, transparent);
+  animation: boom 1s forwards;
+  z-index: 999;
+}
+
+@keyframes boom {
+  0% { opacity: 1; transform: scale(0); }
+  100% { opacity: 0; transform: scale(3); }
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- Giriş Ekranı -->
+<div class="container" id="loginScreen">
   <h1>Enter Your Name 🎁</h1>
   <input type="text" id="nameInput" placeholder="Type your name">
   <br>
   <button onclick="checkName()">Check</button>
-  <div class="message" id="message"></div>
 </div>
 
-<!-- AUDIO IDS DÜZGÜN -->
+<!-- Kazanma Ekranı -->
+<div class="container hidden winScreen" id="winScreen">
+  <h1>🎉 CONGRATULATIONS 🎉</h1>
+  <div class="bigText" id="winnerName"></div>
+  <p>You unlocked your gift!</p>
+</div>
+
+<!-- AUDIOS -->
 <audio id="startSound" src="minecraft-explosion-green-screen.mp3"></audio>
 <audio id="winSound" src="Magic Poof 3.mp3"></audio>
 
@@ -95,9 +116,8 @@ const validNames = [
   "Toprak","Defne","Ulya","Ceyla Teacher"
 ];
 
-function startEffect() {
-  document.getElementById("startSound").play();
-
+// Sayfa açılınca patlama efekti (SES OLMAYABİLİR - TARAYICI ENGELLEYEBİLİR)
+window.onload = function() {
   const boom = document.createElement("div");
   boom.classList.add("explode");
   document.body.appendChild(boom);
@@ -105,27 +125,35 @@ function startEffect() {
   setTimeout(() => {
     boom.remove();
   }, 1000);
-}
+};
 
 function checkName() {
   let input = document.getElementById("nameInput").value.trim();
-  const message = document.getElementById("message");
+  const winSound = document.getElementById("winSound");
+  const startSound = document.getElementById("startSound");
 
   if (input.toLowerCase() === "sarp") {
     input = "Pargalı Sarp";
   }
 
   if (validNames.includes(input)) {
-    document.getElementById("winSound").play();
-    message.innerHTML =
-      "🎉 <b>Congratulations " + input +
-      "!</b><br>You won the gift! What do you want?";
+
+    // Sesleri çal
+    startSound.currentTime = 0;
+    startSound.play().catch(()=>{});
+
+    winSound.currentTime = 0;
+    winSound.play().catch(()=>{});
+
+    // Ekran geçişi
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("winnerName").innerText = input;
+    document.getElementById("winScreen").classList.remove("hidden");
+
   } else {
-    message.innerHTML = "❌ Name not found";
+    alert("❌ Name not found");
   }
 }
-
-window.onload = startEffect;
 
 </script>
 
