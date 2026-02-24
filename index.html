@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Take Your Gift</title>
+<title>Take Your Gift!!!!</title>
 
 <style>
 body {
@@ -13,7 +13,7 @@ body {
     justify-content: center;
     align-items: center;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #141e30, #243b55);
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
     color: white;
     text-align: center;
 }
@@ -42,10 +42,6 @@ button {
     background: #00c6ff;
     color: white;
 }
-
-button:hover {
-    background: #0072ff;
-}
 </style>
 </head>
 
@@ -63,57 +59,41 @@ button:hover {
 
 <script>
 
-// --- Play boom once when page loads ---
+// Boom sadece 1 kez
 window.addEventListener("load", function () {
-    const boom = document.getElementById("boomSound");
-    boom.currentTime = 0;
-    boom.play().catch(()=>{});
+    document.getElementById("boomSound").play().catch(()=>{});
 });
-
-// Turkish lowercase support
-function normalize(text) {
-    return text.trim().toLocaleLowerCase("tr");
-}
-
-// Capitalize each word
-function capitalizeWords(text) {
-    return text
-        .toLocaleLowerCase("tr")
-        .split(" ")
-        .map(word => word.charAt(0).toLocaleUpperCase("tr") + word.slice(1))
-        .join(" ");
-}
 
 function checkName() {
 
-    let input = document.getElementById("nameInput").value;
-    let cleanInput = normalize(input);
+    let input = document.getElementById("nameInput").value.trim();
+
+    // Kontrol için küçük harfe çeviriyoruz (ama ekrana dokunmuyoruz)
+    let control = input.toLocaleLowerCase("tr-TR");
 
     const allowedNames = [
-        "Ali Kaan","Ares","Çınar","Ege","Arya","Alya","Emir","Delal",
+        "Ali kaan","Ares","Çınar","Ege","Arya","Alya","Emir","Delal",
         "Pargalı Sarp","Sarp","Emre","Sertan","Meriç","Ela","Elif","Egesu",
         "Demir","Arda","Hafsa","Işıl","Elizya","Şakir","Ezgi",
         "Toprak","Defne","Ulya","Ceyla teacher"
     ];
 
-    if (allowedNames.includes(cleanInput)) {
+    if (allowedNames.includes(control)) {
 
-        const win = document.getElementById("winSound");
-        win.currentTime = 0;
-        win.play();
+        document.getElementById("winSound").currentTime = 0;
+        document.getElementById("winSound").play();
 
         let finalName;
 
-        // Special rule
-        if (cleanInput === "Sarp") {
+        if (control === "sarp") {
             finalName = "Pargalı Sarp";
         } else {
-            finalName = capitalizeWords(input);
+            finalName = input; // sen nasıl yazdıysan öyle gösterir
         }
 
         document.getElementById("mainBox").innerHTML =
         "<h1>🎉 Congratulations " + finalName + " 🎉</h1>" +
-        "<p>Take your gift 🎁What do you want?_?=:?</p>";
+        "<p>Take your gift 🎁</p>";
 
     } else {
         document.getElementById("result").innerText = "Wrong name!";
